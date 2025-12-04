@@ -33,8 +33,8 @@ public class UofferController {
      * @param offerId
      * @return
      */
-    @GetMapping("/api/uoffer")
-    public ResponseEntity<OfferResponse> getOffer(@RequestParam("offerId") Long offerId) {
+    @GetMapping("/api/uoffer/{offerId}")
+    public ResponseEntity<OfferResponse> getOffer(@PathVariable("offerId") Long offerId) {
         return ResponseEntity
                 .ok(uofferService.getOffer(offerId));
     }

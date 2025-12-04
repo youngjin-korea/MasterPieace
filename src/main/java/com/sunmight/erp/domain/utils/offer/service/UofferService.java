@@ -13,9 +13,9 @@ import com.sunmight.erp.global.exception.EntityNotFoundBusinessException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  * readOnly = true면 JPA가 Dirty Checking(변경 감지)을 비활성화함 → 성능 ↑ && 실수로 조회 로직에서 엔티티 수정해도 JPA가 flush하지
  * 않음
  */
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -57,10 +58,12 @@ public class UofferService {
     // 기존 Offer 수정 + OfferDetail 전체 수정 (OfferDetail 추가(id 없는것)/수정(id 있는것)/삭제(기존에 있지만 요청엔 없는 id)) - 실무 난이도 극상
     @Transactional
     public Long updateOffer(Long offerId, OfferSaveRequest request) {
-
+        log.info("start 기존 엔티티 조회 uofferRepository.findById(offerId)");
         //1) 기존 엔티티 조회
-        UofferEntity offer = uofferRepository.findById(offerId).orElseThrow(
-                () -> new EntityNotFoundBusinessException("Uoffer", offerId));
+        UofferEntity offer = uofferRepository.findById(offerId)
+                .orElseThrow(() -> new EntityNotFoundBusinessException("Uoffer", offerId));
+
+        log.info("end 기존 엔티티 조회 uofferRepository.findById(offerId)");
 
         //2)  offer(공통) 값 수정
         offer.update(
@@ -76,12 +79,12 @@ public class UofferService {
                 request.taxRate()
         );
 
-        //3) 기존 Details Map 으로 변경 - key: id, value: OfferDetailRequest
+        //3) 변경전 조회한 uOfferEntity의 uOfferDetails를 id 와 인스턴스로 매핑함
+        log.info("end offer.getUofferDetails()");
         Map<Long, UofferDetailEntity> oldDetails = offer.getUofferDetails().stream()
                 .collect(Collectors.toMap(UofferDetailEntity::getId, d -> d));
-
+        log.info("end offer.getUofferDetails()");
         //4) 신규 request Details 순회하며 요청 처리
-
         List<OfferDetailRequest> detailRequests =
                 request.details() != null ? request.details() : Collections.emptyList();
 
@@ -111,9 +114,9 @@ public class UofferService {
             }
         }
 
-        // 프론트에 삭제한 목록이 남은 oldDetails delete
-        for (UofferDetailEntity removed : oldDetails.values()) {
-            uofferDetailRepository.delete(removed);
+        // 프론트에 삭제한 목록이 남은 oldDetails delete Detail의 레포지토리에서 삭제문을 날려도 offer list에 값이 있음 삭제가 안됨
+        for (UofferDetailEntity detail : oldDetails.values()) {
+            offer.getUofferDetails().remove(detail);
         }
 
         return offer.getId();

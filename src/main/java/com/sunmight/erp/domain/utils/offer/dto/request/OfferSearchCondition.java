@@ -12,7 +12,7 @@ public class OfferSearchCondition {
     private String companyName;     // 회사명 검색
     private String managerName;     // 담당자명
 
-    @DateTimeFormat(pattern = "yyyydd")
+    @DateTimeFormat(pattern = "yyyyMMdd")
     private LocalDate startDate;     // 견적일 시작
 
     // spring 의 기본 컨버터 패턴 yyyy-MM-dd, 지정해준 yyyyMMdd 모두 컨버팅 가능해짐
