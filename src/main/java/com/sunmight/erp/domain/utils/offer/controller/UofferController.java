@@ -2,9 +2,12 @@ package com.sunmight.erp.domain.utils.offer.controller;
 
 import com.sunmight.erp.domain.utils.offer.dto.request.OfferSearchCondition;
 import com.sunmight.erp.domain.utils.offer.dto.response.OfferResponse;
+import com.sunmight.erp.domain.utils.offer.mybatis.dto.request.OfferDetailStatCondDto;
+import com.sunmight.erp.domain.utils.offer.mybatis.dto.response.OfferDetailStatDto;
 import com.sunmight.erp.domain.utils.offer.service.UofferService;
 import com.sunmight.erp.domain.utils.offer.dto.request.OfferSaveRequest;
 import com.sunmight.erp.domain.utils.offer.dto.response.OfferSaveResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +62,12 @@ public class UofferController {
             cond = new OfferSearchCondition();
         }
         return uofferService.getOfferList(cond, pageable);
+    }
+
+    @GetMapping("/api/uoffer")
+    public ResponseEntity<List<OfferDetailStatDto>> getOfferDetailStats(@ModelAttribute @Valid OfferDetailStatCondDto cond) {
+        return ResponseEntity
+                .ok(uofferService.getOfferDetailStats(cond));
     }
 
     //OfferSaveRequest @Valid 예외 발생시 컨트롤러 실행 전에 MethodArgumentNotValidException 발생 -> GlobalExceptionHandler 에서 예외처리

@@ -18,16 +18,23 @@
 <!--    from item-->
 <!--    where id = #{id}-->
 <!--  </select>-->
-  <select id="findAll" resultType="Item">
-    select id, item_name, price, quantity
-    from item
-    <where>
-      <if test="itemName != null and itemName != ''">
-        and item_name like concat('%',#{itemName},'%')
-      </if>
-      <if test="maxPrice != null">
-        and price &lt;= #{maxPrice}
-      </if>
-    </where>
+  <select id="getOfferDetailStats" resultType="OfferDetailStatDto">
+    SELECT T1.model_name AS itemTitle,
+           SUM(T1.quantity) AS totalQuantity,
+           SUM(T1.amount) AS totalPrice
+      FROM (
+              SELECT
+                    d.model_name,
+                    d.quantity AS quantity,
+                    (d.quantity * d.supply_price) AS amount
+                FROM
+                    u_offer_detail d
+                    INNER JOIN u_offer o ON o.id = d.u_offer_id
+               WHERE
+                    o.offer_date BETWEEN #{startDate} AND #{endDate}
+                AND o.company_name LIKE CONCAT('%', #{company}, '%')
+            ) T1
+    GROUP BY T1.model_name
+    ORDER BY itemTitle ASC, totalPrice DESC
   </select>
 </mapper>

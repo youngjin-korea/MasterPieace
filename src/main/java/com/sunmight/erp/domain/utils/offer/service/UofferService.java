@@ -7,6 +7,9 @@ import com.sunmight.erp.domain.utils.offer.dto.response.OfferDetailResponse;
 import com.sunmight.erp.domain.utils.offer.dto.response.OfferResponse;
 import com.sunmight.erp.domain.utils.offer.entity.UofferDetailEntity;
 import com.sunmight.erp.domain.utils.offer.entity.UofferEntity;
+import com.sunmight.erp.domain.utils.offer.mybatis.UofferMapper;
+import com.sunmight.erp.domain.utils.offer.mybatis.dto.request.OfferDetailStatCondDto;
+import com.sunmight.erp.domain.utils.offer.mybatis.dto.response.OfferDetailStatDto;
 import com.sunmight.erp.domain.utils.offer.repository.UofferDetailRepository;
 import com.sunmight.erp.domain.utils.offer.repository.UofferRepository;
 import com.sunmight.erp.global.exception.EntityNotFoundBusinessException;
@@ -34,6 +37,8 @@ public class UofferService {
 
     private final UofferRepository uofferRepository;
     private final UofferDetailRepository uofferDetailRepository;
+
+    private final UofferMapper uofferMapper;
 
     // Offer(견적) + OfferDetail(견적상세) 리스트 함께 저장
     @Transactional
@@ -151,6 +156,10 @@ public class UofferService {
                 .map(uoffer -> OfferResponse.of(uoffer)).toList();
 
         return new PageImpl<>(offerList, pageable, uofferEntities.getTotalElements());
+    }
+
+    public List<OfferDetailStatDto> getOfferDetailStats(OfferDetailStatCondDto cond) {
+        return uofferMapper.getOfferDetailStats(cond);
     }
 
     //TODO:: addDetail (옵션)	Offer에 detail을 추가하는 내부 헬퍼
