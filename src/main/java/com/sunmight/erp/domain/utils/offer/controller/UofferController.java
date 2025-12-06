@@ -45,8 +45,8 @@ public class UofferController {
     /**
      * 동적 쿼리, 페이징 조회
      * <p>
-     * 문제 : cond를 @RequestBody로 받았을때 조건 없이 검색하면 Body가 없는데 바인딩 시도하여 예외발생 해결 : @ModelAttribute로 생성후
-     * set하는 방식으로 값이 없으면 null 이 되어 예외가 발생하지 않음
+     * 문제 : cond를 @RequestBody로 받았을때 조건 없이 검색하면 Body가 없는데 바인딩 시도하여 예외발생
+     * 해결 : @ModelAttribute로 생성후 set하는 방식으로 값이 없어도 cond에 널이 아니라 기본 생성자로 생성된 인스턴스가 들어감
      * <p>
      * 문제 : cond 에서 아무 날짜 포맷을 지정하지 않으면 LocalDate는 스프링 기본 컨버터로 년-월-일 패턴만 인식을 함 해결 : cond LocalDate
      * type field에 @DateTimeFormat(pattern="yyyyMMdd") 지정한 패턴으로 변경 가능
@@ -58,12 +58,14 @@ public class UofferController {
     @GetMapping("/api/uoffers/search")
     public Page<OfferResponse> search(@ModelAttribute OfferSearchCondition cond,
             Pageable pageable) {
-        if (cond == null) {
-            cond = new OfferSearchCondition();
-        }
         return uofferService.getOfferList(cond, pageable);
     }
 
+    /**
+     * TODO :: 응답 스펙 객체로 변환
+     * @param cond
+     * @return
+     */
     @GetMapping("/api/uoffer")
     public ResponseEntity<List<OfferDetailStatDto>> getOfferDetailStats(@ModelAttribute @Valid OfferDetailStatCondDto cond) {
         return ResponseEntity
