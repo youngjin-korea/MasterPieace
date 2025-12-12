@@ -44,6 +44,12 @@ dependencies {
     //Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // Apache POI 엑셀 업로드 안정적&범용적 xls/xlsx 모두 지원
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+    // 대량 다운로드
+    implementation 'org.apache.poi:poi-ooxml-full:5.2.3'
+
     compileOnly 'org.projectlombok:lombok'
 //    runtimeOnly 'com.h2database:h2'
     implementation 'mysql:mysql-connector-java:8.0.32'

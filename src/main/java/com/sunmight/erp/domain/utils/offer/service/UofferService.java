@@ -164,5 +164,6 @@ public class UofferService {
 
     //TODO:: addDetail (옵션)	Offer에 detail을 추가하는 내부 헬퍼
 
+
     //TODO:: removeDetail (옵션)	Offer에서 detail을 삭제하는 내부 헬퍼
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Table(name = "TEST")
 @Entity
 public class TestEntity {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 

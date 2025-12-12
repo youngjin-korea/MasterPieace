@@ -13,11 +13,6 @@
 <!--    quantity=#{updateParam.quantity}-->
 <!--    where id = #{id}-->
 <!--  </update>-->
-<!--  <select id="findById" resultType="Item">-->
-<!--    select id, item_name, price, quantity-->
-<!--    from item-->
-<!--    where id = #{id}-->
-<!--  </select>-->
   <select id="getOfferDetailStats" resultType="OfferDetailStatDto">
     SELECT T1.model_name AS itemTitle,
            SUM(T1.quantity) AS totalQuantity,
@@ -29,7 +24,8 @@
                     (d.quantity * d.supply_price) AS amount
                 FROM
                     u_offer_detail d
-                    INNER JOIN u_offer o ON o.id = d.u_offer_id
+                JOIN
+                    u_offer o ON o.id = d.u_offer_id
                WHERE
                     o.offer_date BETWEEN #{startDate} AND #{endDate}
                 AND o.company_name LIKE CONCAT('%', #{company}, '%')
